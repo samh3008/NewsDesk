@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -81,189 +82,138 @@
     }
     .btn-refresh:hover { background: var(--gold-dim); }
     .btn-refresh:disabled { opacity: 0.4; cursor: default; }
-    .ticker-bar {
-      background: var(--surface2);
-      border-bottom: 1px solid var(--border);
-      height: 34px;
-      overflow: hidden;
-      position: relative;
-    }
-    .ticker-bar::before, .ticker-bar::after {
-      content: '';
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 60px;
-      z-index: 2;
-      pointer-events: none;
-    }
-    .ticker-bar::before { left: 0; background: linear-gradient(to right, var(--surface2), transparent); }
-    .ticker-bar::after  { right: 0; background: linear-gradient(to left, var(--surface2), transparent); }
-    .ticker-track {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      white-space: nowrap;
-    }
-    .ticker-track.animate { animation: scroll-ticker 55s linear infinite; }
-    .ticker-track:hover { animation-play-state: paused; }
-    @keyframes scroll-ticker {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    .ticker-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 0 22px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11.5px;
-      border-right: 1px solid var(--border-soft);
-      height: 100%;
-    }
-    .t-label { color: var(--text-dim); font-size: 10px; letter-spacing: 0.05em; }
-    .t-price { color: var(--text-bright); font-weight: 500; }
-    .t-chg { font-size: 10.5px; }
-    .t-chg.up   { color: var(--green); }
-    .t-chg.down { color: var(--red); }
-    .main {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 24px 20px 40px;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 24px;
-      align-items: start;
-    }
-    @media (max-width: 980px) {
-      .main { grid-template-columns: 1fr 1fr; }
-      .section:nth-child(3) { grid-column: 1 / -1; }
-    }
-    @media (max-width: 620px) {
-      .main { grid-template-columns: 1fr; padding: 16px 14px 32px; gap: 28px; }
-      .section:nth-child(3) { grid-column: auto; }
-      .header-center { display: none; }
-    }
-    .section-head {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-    .section-icon { font-size: 15px; }
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text-bright);
-    }
-    .section-badge {
-      margin-left: auto;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9.5px;
-      color: var(--text-dim);
-      background: var(--surface3);
-      border: 1px solid var(--border);
-      padding: 1px 7px;
-      border-radius: 2px;
-    }
-    .card { padding: 11px 0; border-bottom: 1px solid var(--border-soft); }
-    .card:last-child { border-bottom: none; }
-    .card a { text-decoration: none; color: inherit; display: block; }
-    .card-title {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-bright);
-      line-height: 1.45;
-      margin-bottom: 4px;
-      transition: color 0.15s;
-    }
-    .card a:hover .card-title { color: var(--gold-bright); }
-    .card-snippet {
-      font-size: 11.5px;
-      color: var(--text-dim);
-      line-height: 1.5;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      margin-bottom: 5px;
-    }
-    .card-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-    .card-source { color: var(--gold); }
-    .state-box {
-      padding: 28px 0;
-      text-align: center;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--text-dim);
-    }
-    .state-box.loading::after {
-      content: '';
-      display: block;
-      margin: 12px auto 0;
-      width: 24px;
-      height: 2px;
-      background: var(--gold-dim);
-      animation: load-bar 0.9s ease-in-out infinite alternate;
-      border-radius: 2px;
-    }
-    @keyframes load-bar {
-      from { width: 8px; opacity: 0.4; }
-      to   { width: 40px; opacity: 1; }
-    }
-    .watchlist-empty {
-      margin-top: 8px;
-      border: 1px dashed var(--border);
-      border-radius: 6px;
-      padding: 32px 20px;
-      text-align: center;
-    }
-    .we-icon { font-size: 26px; margin-bottom: 10px; }
-    .watchlist-empty p { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
-    .we-tag {
-      display: inline-block;
-      margin-top: 14px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9.5px;
-      color: var(--gold);
-      border: 1px solid var(--gold-dim);
-      padding: 3px 10px;
-      border-radius: 2px;
-      letter-spacing: 0.06em;
-    }
-    .footer {
-      border-top: 1px solid var(--border);
-      padding: 18px 20px;
-      text-align: center;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-    }
-    .footer a { color: var(--text-dim); text-decoration: none; }
-    .footer a:hover { color: var(--gold); }
-    .pulse {
-      display: inline-block;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--green);
-      margin-right: 5px;
-      animation: pulse-anim 2s ease infinite;
-      vertical-align: middle;
-    }
-    @keyframes pulse-anim {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
-    }
+
+```
+/* TICKER */
+.ticker-bar {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  height: 34px;
+  overflow: hidden;
+  position: relative;
+}
+.ticker-bar::before, .ticker-bar::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; width: 60px;
+  z-index: 2; pointer-events: none;
+}
+.ticker-bar::before { left: 0; background: linear-gradient(to right, var(--surface2), transparent); }
+.ticker-bar::after  { right: 0; background: linear-gradient(to left, var(--surface2), transparent); }
+.ticker-track {
+  display: flex; align-items: center;
+  height: 100%; white-space: nowrap;
+}
+.ticker-track.animate { animation: scroll-ticker 55s linear infinite; }
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes scroll-ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-item {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 0 22px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11.5px;
+  border-right: 1px solid var(--border-soft); height: 100%;
+}
+.t-label { color: var(--text-dim); font-size: 10px; letter-spacing: 0.05em; }
+.t-price { color: var(--text-bright); font-weight: 500; }
+.t-chg { font-size: 10.5px; }
+.t-chg.up   { color: var(--green); }
+.t-chg.down { color: var(--red); }
+
+/* GRID */
+.main {
+  max-width: 1280px; margin: 0 auto;
+  padding: 24px 20px 40px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px; align-items: start;
+}
+@media (max-width: 980px) {
+  .main { grid-template-columns: 1fr 1fr; }
+  .section:nth-child(3) { grid-column: 1 / -1; }
+}
+@media (max-width: 620px) {
+  .main { grid-template-columns: 1fr; padding: 16px 14px 32px; gap: 28px; }
+  .section:nth-child(3) { grid-column: auto; }
+  .header-center { display: none; }
+}
+
+/* SECTION */
+.section-head {
+  display: flex; align-items: center; gap: 9px;
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.section-icon { font-size: 15px; }
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px; font-weight: 600; color: var(--text-bright);
+}
+.section-badge {
+  margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+  color: var(--text-dim); background: var(--surface3);
+  border: 1px solid var(--border); padding: 1px 7px; border-radius: 2px;
+}
+
+/* CARDS */
+.card { padding: 11px 0; border-bottom: 1px solid var(--border-soft); }
+.card:last-child { border-bottom: none; }
+.card a { text-decoration: none; color: inherit; display: block; }
+.card-title {
+  font-size: 13px; font-weight: 500; color: var(--text-bright);
+  line-height: 1.45; margin-bottom: 5px; transition: color 0.15s;
+}
+.card a:hover .card-title { color: var(--gold-bright); }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-muted);
+}
+.card-source { color: var(--gold); }
+
+/* THEME TAG */
+.theme-tag {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: 0.05em;
+  padding: 1px 6px; border-radius: 2px;
+  border: 1px solid; opacity: 0.85;
+}
+
+/* STATES */
+.state-box {
+  padding: 28px 0; text-align: center;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim);
+}
+.state-box.loading::after {
+  content: ''; display: block; margin: 12px auto 0;
+  width: 24px; height: 2px; background: var(--gold-dim);
+  animation: load-bar 0.9s ease-in-out infinite alternate; border-radius: 2px;
+}
+@keyframes load-bar {
+  from { width: 8px; opacity: 0.4; }
+  to   { width: 40px; opacity: 1; }
+}
+
+/* FOOTER */
+.footer {
+  border-top: 1px solid var(--border); padding: 18px 20px;
+  text-align: center; font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: var(--text-muted); letter-spacing: 0.04em;
+}
+.footer a { color: var(--text-dim); text-decoration: none; }
+.footer a:hover { color: var(--gold); }
+.pulse {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); margin-right: 5px;
+  animation: pulse-anim 2s ease infinite; vertical-align: middle;
+}
+@keyframes pulse-anim {
+  0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+}
+```
+
   </style>
 </head>
 <body>
@@ -287,7 +237,7 @@
   <section class="section">
     <div class="section-head">
       <span class="section-icon">🇮🇳</span>
-      <span class="section-title">Indian Markets</span>
+      <span class="section-title">India</span>
       <span class="section-badge" id="badge-india">—</span>
     </div>
     <div id="feed-india"><div class="state-box loading">FETCHING FEEDS</div></div>
@@ -296,7 +246,7 @@
   <section class="section">
     <div class="section-head">
       <span class="section-icon">🌍</span>
-      <span class="section-title">Global Macro</span>
+      <span class="section-title">World</span>
       <span class="section-badge" id="badge-global">—</span>
     </div>
     <div id="feed-global"><div class="state-box loading">FETCHING FEEDS</div></div>
@@ -308,52 +258,87 @@
       <span class="section-title">Watchlist</span>
       <span class="section-badge" id="badge-watchlist">—</span>
     </div>
-    <div id="feed-watchlist">
-      <div class="watchlist-empty">
-        <div class="we-icon">📋</div>
-        <p>Share your portfolio watchlist<br>to enable personalised stock news</p>
-        <span class="we-tag">COMING SOON</span>
-      </div>
-    </div>
+    <div id="feed-watchlist"><div class="state-box loading">FETCHING FEEDS</div></div>
   </section>
 </main>
 
 <footer class="footer">
   <span class="pulse"></span>
-  THE DESK &nbsp;·&nbsp; Hosted on <a href="https://pages.github.com" target="_blank">GitHub Pages</a> &nbsp;·&nbsp; RSS via rss2json &nbsp;·&nbsp; Auto-refreshes every 5 min
+  THE DESK &nbsp;·&nbsp; <a href="https://pages.github.com" target="_blank">GitHub Pages</a> &nbsp;·&nbsp; Google News RSS &nbsp;·&nbsp; Auto-refreshes every 5 min
 </footer>
 
 <script>
-const RSS_API = 'https://api.rss2json.com/v1/api.json?rss_url=';
-const PROXY   = 'https://corsproxy.io/?';
-const YF_BASE = 'https://query1.finance.yahoo.com/v8/finance/chart/';
+// ── CONFIG ───────────────────────────────────────────────────────────
+const ALLORIGINS = 'https://api.allorigins.win/get?url=';
+const PROXY_YF   = 'https://corsproxy.io/?';
+const YF_BASE    = 'https://query1.finance.yahoo.com/v8/finance/chart/';
 
-const MARKET_SYMBOLS = [
-  { sym: '^NSEI',     label: 'NIFTY 50',    dec: 2 },
-  { sym: '^BSESN',    label: 'SENSEX',       dec: 2 },
-  { sym: '^NSEBANK',  label: 'BANK NIFTY',   dec: 2 },
-  { sym: 'USDINR=X',  label: 'USD/INR',      dec: 4 },
-  { sym: '^INDIAVIX', label: 'INDIA VIX',    dec: 2 },
-];
+function gn(query, region) {
+  const loc = region === 'IN' ? 'hl=en-IN&gl=IN&ceid=IN:en' : 'hl=en&gl=US&ceid=US:en';
+  return 'https://news.google.com/rss/search?q=' + encodeURIComponent(query) + '&' + loc;
+}
 
+// Wide-net: top stories + broad business sweep
 const INDIA_FEEDS = [
-  { name: 'ET Markets',        url: 'https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms', count: 7 },
-  { name: 'Business Standard', url: 'https://www.business-standard.com/rss/markets-106.rss',               count: 5 },
-  { name: 'Moneycontrol',      url: 'https://www.moneycontrol.com/rss/marketreports.xml',                  count: 5 },
-  { name: 'Livemint',          url: 'https://www.livemint.com/rss/markets',                                count: 4 },
+  { url: 'https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en' },
+  { url: gn('india business economy finance', 'IN') },
+  { url: gn('india markets stocks RBI SEBI rupee', 'IN') },
 ];
 
 const GLOBAL_FEEDS = [
-  { name: 'BBC Business', url: 'https://feeds.bbci.co.uk/news/business/rss.xml',  count: 6 },
-  { name: 'Reuters',      url: 'https://feeds.reuters.com/reuters/businessNews',   count: 6 },
-  { name: 'FT',           url: 'https://www.ft.com/rss/home/international',        count: 4 },
+  { url: 'https://news.google.com/rss?hl=en&gl=US&ceid=US:en' },
+  { url: gn('global economy business finance trade', 'US') },
+  { url: gn('inflation interest rates oil dollar Fed macro', 'US') },
 ];
 
+// Watchlist: keyword-per-theme, color-coded
+const WATCHLIST_FEEDS = [
+  {
+    theme: 'BFSI',
+    color: '#9b6fd4',
+    url: gn('"HDFC Bank" OR "ICICI Bank" OR "Axis Bank" OR "Kotak Bank" OR "SBI" OR "Jio Financial" OR "CAMS" OR "CDSL" OR "India banking" OR "Indian banks"', 'IN'),
+  },
+  {
+    theme: 'Premiumisation',
+    color: '#c8903c',
+    url: gn('"Radico Khaitan" OR "Titan Company" OR "Ethos" OR "Manyavar" OR "Indian Hotels" OR "ITC Hotels" OR "SJS Enterprises" OR "Reliance Industries" OR "ITC Limited" OR "India luxury" OR "India premium"', 'IN'),
+  },
+  {
+    theme: 'Mass Formal.',
+    color: '#3aad65',
+    url: gn('"Uno Minda" OR "Aptus Value" OR "Home First Finance" OR "DMart" OR "Hero MotoCorp" OR "Emami" OR "CCAvenue" OR "Pine Labs" OR "TVS Motor" OR "Samvardhana Motherson" OR "Motherson Sumi" OR "Minda Industries"', 'IN'),
+  },
+  {
+    theme: 'Energy Trans.',
+    color: '#e07a30',
+    url: gn('"Premier Energies" OR "NTPC Green" OR "JSW Energy" OR "Suzlon" OR "KEC International" OR "Apar Industries" OR "India renewable" OR "India solar"', 'IN'),
+  },
+  {
+    theme: 'Digital Infra',
+    color: '#4a90d0',
+    url: gn('"Netweb Technologies" OR "Dixon Technologies" OR "Anant Raj" OR "Techno Electric" OR "E2E Networks" OR "Infosys" OR "Tech Mahindra" OR "India data center" OR "India digital infra"', 'IN'),
+  },
+  {
+    theme: 'Healthcare',
+    color: '#4ec9c9',
+    url: gn('"KIMS" OR "Krsnaa Diagnostics" OR "Dr Lal PathLabs" OR "Vijaya Diagnostic" OR "India diagnostics" OR "India healthcare"', 'IN'),
+  },
+];
+
+const MARKET_SYMBOLS = [
+  { sym: '^NSEI',     label: 'NIFTY 50',   dec: 2 },
+  { sym: '^BSESN',    label: 'SENSEX',     dec: 2 },
+  { sym: '^NSEBANK',  label: 'BANK NIFTY', dec: 2 },
+  { sym: 'USDINR=X',  label: 'USD/INR',    dec: 4 },
+  { sym: '^INDIAVIX', label: 'INDIA VIX',  dec: 2 },
+];
+
+// ── HELPERS ──────────────────────────────────────────────────────────
 function timeAgo(str) {
   if (!str) return '';
   const diff = Math.floor((Date.now() - new Date(str)) / 60000);
   if (isNaN(diff) || diff < 0) return 'just now';
-  if (diff < 1) return 'just now';
+  if (diff < 1)  return 'just now';
   if (diff < 60) return diff + 'm ago';
   const h = Math.floor(diff / 60);
   if (h < 24) return h + 'h ago';
@@ -365,14 +350,85 @@ function fmtNum(n, dec) {
   return Number(n).toLocaleString('en-IN', { minimumFractionDigits: dec, maximumFractionDigits: dec });
 }
 
-function stripHtml(h) {
-  return (h || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+function extractSource(el, rawTitle) {
+  const src = el.querySelector('source');
+  if (src?.textContent?.trim()) return src.textContent.trim();
+  const m = (rawTitle || '').match(/ - ([^-]{2,40})$/);
+  return m ? m[1].trim() : '';
 }
 
+function cleanTitle(title) {
+  return (title || '').replace(/ - [^-]{2,50}$/, '').trim();
+}
+
+// ── FETCH ONE FEED ────────────────────────────────────────────────────
+async function fetchFeed(feedObj) {
+  const url = typeof feedObj === 'string' ? feedObj : feedObj.url;
+  try {
+    const res  = await fetch(ALLORIGINS + encodeURIComponent(url), { signal: AbortSignal.timeout(10000) });
+    const json = await res.json();
+    if (!json.contents) return [];
+    const doc   = new DOMParser().parseFromString(json.contents, 'text/xml');
+    return Array.from(doc.querySelectorAll('item')).map(el => {
+      const rawTitle = el.querySelector('title')?.textContent?.trim() || '';
+      return {
+        title:   cleanTitle(rawTitle),
+        link:    el.querySelector('link')?.textContent?.trim() || '',
+        pubDate: el.querySelector('pubDate')?.textContent?.trim() || '',
+        source:  extractSource(el, rawTitle),
+        theme:   feedObj.theme  || null,
+        color:   feedObj.color  || null,
+      };
+    }).filter(i => i.title);
+  } catch(_) { return []; }
+}
+
+// ── GENERIC PANEL LOADER ──────────────────────────────────────────────
+async function loadFeed(feeds, containerId, badgeId, max) {
+  const el    = document.getElementById(containerId);
+  const badge = document.getElementById(badgeId);
+
+  const settled = await Promise.allSettled(feeds.map(fetchFeed));
+  let all = [];
+  settled.forEach(r => { if (r.status === 'fulfilled') all.push(...r.value); });
+
+  all.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+  const seen = new Set();
+  all = all.filter(item => {
+    const k = item.title.toLowerCase().slice(0, 70);
+    if (seen.has(k)) return false;
+    seen.add(k); return true;
+  }).slice(0, max || 20);
+
+  badge.textContent = all.length || '—';
+
+  if (!all.length) {
+    el.innerHTML = '<div class="state-box">No articles loaded — check your connection.</div>';
+    return;
+  }
+
+  el.innerHTML = all.map(item => {
+    const themeTag = item.theme
+      ? `<span class="theme-tag" style="color:${item.color};border-color:${item.color}22;background:${item.color}11">${item.theme}</span>`
+      : '';
+    return `<div class="card">
+      <a href="${item.link || '#'}" target="_blank" rel="noopener noreferrer">
+        <div class="card-title">${item.title}</div>
+        <div class="card-meta">
+          ${item.source ? `<span class="card-source">${item.source}</span><span>·</span>` : ''}
+          <span>${timeAgo(item.pubDate)}</span>
+          ${themeTag ? `<span>·</span>${themeTag}` : ''}
+        </div>
+      </a>
+    </div>`;
+  }).join('');
+}
+
+// ── MARKET TICKER ─────────────────────────────────────────────────────
 async function fetchQuote(sym) {
   try {
-    const url = PROXY + encodeURIComponent(YF_BASE + sym + '?interval=1d&range=1d');
-    const res  = await fetch(url, { signal: AbortSignal.timeout(6000) });
+    const url  = PROXY_YF + encodeURIComponent(YF_BASE + sym + '?interval=1d&range=1d');
+    const res  = await fetch(url, { signal: AbortSignal.timeout(7000) });
     const json = await res.json();
     const meta = json?.chart?.result?.[0]?.meta;
     if (!meta) return null;
@@ -383,14 +439,12 @@ async function fetchQuote(sym) {
 async function loadTicker() {
   const track = document.getElementById('tickerTrack');
   track.classList.remove('animate');
-
   const results = await Promise.allSettled(MARKET_SYMBOLS.map(m => fetchQuote(m.sym)));
-
   const items = MARKET_SYMBOLS.map((m, i) => {
-    const q = results[i].status === 'fulfilled' ? results[i].value : null;
+    const q     = results[i].status === 'fulfilled' ? results[i].value : null;
     const price = q?.price, prev = q?.prev;
-    const pct = (price && prev) ? ((price - prev) / prev * 100) : null;
-    const dir = pct == null ? '' : pct > 0 ? 'up' : pct < 0 ? 'down' : '';
+    const pct   = (price && prev) ? ((price - prev) / prev * 100) : null;
+    const dir   = pct == null ? '' : pct > 0 ? 'up' : pct < 0 ? 'down' : '';
     const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '';
     const chgStr = pct != null ? `${arrow} ${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '';
     return `<div class="ticker-item">
@@ -399,82 +453,34 @@ async function loadTicker() {
       ${chgStr ? `<span class="t-chg ${dir}">${chgStr}</span>` : ''}
     </div>`;
   });
-
   track.innerHTML = items.join('') + items.join('');
   track.classList.add('animate');
 }
 
-async function fetchRSS(feed) {
-  try {
-    const url = RSS_API + encodeURIComponent(feed.url) + '&count=' + (feed.count || 6);
-    const res  = await fetch(url, { signal: AbortSignal.timeout(8000) });
-    const json = await res.json();
-    if (json.status === 'ok' && Array.isArray(json.items)) {
-      return json.items.map(i => ({ ...i, _src: feed.name }));
-    }
-  } catch(_) {}
-  return [];
-}
-
-async function loadFeed(feeds, containerId, badgeId, max) {
-  const el = document.getElementById(containerId);
-  const badge = document.getElementById(badgeId);
-
-  const settled = await Promise.allSettled(feeds.map(fetchRSS));
-  let all = [];
-  settled.forEach(r => { if (r.status === 'fulfilled') all.push(...r.value); });
-
-  all.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-  const seen = new Set();
-  all = all.filter(i => {
-    const k = (i.title || '').trim().toLowerCase().slice(0, 60);
-    if (seen.has(k)) return false;
-    seen.add(k); return true;
-  }).slice(0, max || 14);
-
-  badge.textContent = all.length || '—';
-
-  if (!all.length) {
-    el.innerHTML = '<div class="state-box">Could not load feeds — try refreshing.</div>';
-    return;
-  }
-
-  el.innerHTML = all.map(item => {
-    const snippet = stripHtml(item.description).slice(0, 130);
-    return `<div class="card">
-      <a href="${item.link || '#'}" target="_blank" rel="noopener noreferrer">
-        <div class="card-title">${item.title || 'Untitled'}</div>
-        ${snippet ? `<div class="card-snippet">${snippet}…</div>` : ''}
-        <div class="card-meta">
-          <span class="card-source">${item._src}</span>
-          <span>·</span>
-          <span>${timeAgo(item.pubDate)}</span>
-        </div>
-      </a>
-    </div>`;
-  }).join('');
-}
-
+// ── HEADER ────────────────────────────────────────────────────────────
 function updateHeader() {
   const now = new Date();
-  const dateStr = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  document.getElementById('headerDate').textContent = dateStr.toUpperCase();
-  const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-  document.getElementById('lastUpdated').innerHTML = '<span class="pulse"></span>Updated ' + timeStr + ' IST';
+  document.getElementById('headerDate').textContent =
+    now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
+  const t = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('lastUpdated').innerHTML = '<span class="pulse"></span>Updated ' + t + ' IST';
 }
 
+// ── BOOT ──────────────────────────────────────────────────────────────
 let refreshTimer;
 async function loadAll() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true;
   btn.textContent = '↺ LOADING';
-  document.getElementById('feed-india').innerHTML  = '<div class="state-box loading">FETCHING FEEDS</div>';
-  document.getElementById('feed-global').innerHTML = '<div class="state-box loading">FETCHING FEEDS</div>';
+  ['feed-india','feed-global','feed-watchlist'].forEach(id => {
+    document.getElementById(id).innerHTML = '<div class="state-box loading">FETCHING FEEDS</div>';
+  });
 
   await Promise.allSettled([
     loadTicker(),
-    loadFeed(INDIA_FEEDS,  'feed-india',  'badge-india',  14),
-    loadFeed(GLOBAL_FEEDS, 'feed-global', 'badge-global', 12),
+    loadFeed(INDIA_FEEDS,     'feed-india',     'badge-india',     20),
+    loadFeed(GLOBAL_FEEDS,    'feed-global',    'badge-global',    18),
+    loadFeed(WATCHLIST_FEEDS, 'feed-watchlist', 'badge-watchlist', 20),
   ]);
 
   updateHeader();
@@ -488,5 +494,6 @@ updateHeader();
 setInterval(updateHeader, 60000);
 loadAll();
 </script>
+
 </body>
 </html>
