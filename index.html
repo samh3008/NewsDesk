@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Desk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07090f;
+      --surface: #0d1119;
+      --surface2: #111722;
+      --surface3: #161e2c;
+      --border: #1a2235;
+      --border-soft: #131b28;
+      --text: #c8c0b0;
+      --text-dim: #5a6680;
+      --text-muted: #3a4458;
+      --text-bright: #ede5d3;
+      --gold: #c8903c;
+      --gold-bright: #e0a84a;
+      --gold-dim: #5a3d18;
+      --green: #3aad65;
+      --red: #d64f4f;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+    .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-bright);
+      letter-spacing: -0.5px;
+    }
+    .brand em { font-style: normal; color: var(--gold); }
+    .header-center {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    #lastUpdated {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .btn-refresh {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      padding: 5px 12px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-refresh:hover { background: var(--gold-dim); }
+    .btn-refresh:disabled { opacity: 0.4; cursor: default; }
+    .ticker-bar {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      height: 34px;
+      overflow: hidden;
+      position: relative;
+    }
+    .ticker-bar::before, .ticker-bar::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 60px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .ticker-bar::before { left: 0; background: linear-gradient(to right, var(--surface2), transparent); }
+    .ticker-bar::after  { right: 0; background: linear-gradient(to left, var(--surface2), transparent); }
+    .ticker-track {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      white-space: nowrap;
+    }
+    .ticker-track.animate { animation: scroll-ticker 55s linear infinite; }
+    .ticker-track:hover { animation-play-state: paused; }
+    @keyframes scroll-ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 22px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11.5px;
+      border-right: 1px solid var(--border-soft);
+      height: 100%;
+    }
+    .t-label { color: var(--text-dim); font-size: 10px; letter-spacing: 0.05em; }
+    .t-price { color: var(--text-bright); font-weight: 500; }
+    .t-chg { font-size: 10.5px; }
+    .t-chg.up   { color: var(--green); }
+    .t-chg.down { color: var(--red); }
+    .main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 20px 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .main { grid-template-columns: 1fr 1fr; }
+      .section:nth-child(3) { grid-column: 1 / -1; }
+    }
+    @media (max-width: 620px) {
+      .main { grid-template-columns: 1fr; padding: 16px 14px 32px; gap: 28px; }
+      .section:nth-child(3) { grid-column: auto; }
+      .header-center { display: none; }
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-icon { font-size: 15px; }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-bright);
+    }
+    .section-badge {
+      margin-left: auto;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9.5px;
+      color: var(--text-dim);
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      padding: 1px 7px;
+      border-radius: 2px;
+    }
+    .card { padding: 11px 0; border-bottom: 1px solid var(--border-soft); }
+    .card:last-child { border-bottom: none; }
+    .card a { text-decoration: none; color: inherit; display: block; }
+    .card-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-bright);
+      line-height: 1.45;
+      margin-bottom: 4px;
+      transition: color 0.15s;
+    }
+    .card a:hover .card-title { color: var(--gold-bright); }
+    .card-snippet {
+      font-size: 11.5px;
+      color: var(--text-dim);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    .card-source { color: var(--gold); }
+    .state-box {
+      padding: 28px 0;
+      text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .state-box.loading::after {
+      content: '';
+      display: block;
+      margin: 12px auto 0;
+      width: 24px;
+      height: 2px;
+      background: var(--gold-dim);
+      animation: load-bar 0.9s ease-in-out infinite alternate;
+      border-radius: 2px;
+    }
+    @keyframes load-bar {
+      from { width: 8px; opacity: 0.4; }
+      to   { width: 40px; opacity: 1; }
+    }
+    .watchlist-empty {
+      margin-top: 8px;
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      padding: 32px 20px;
+      text-align: center;
+    }
+    .we-icon { font-size: 26px; margin-bottom: 10px; }
+    .watchlist-empty p { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+    .we-tag {
+      display: inline-block;
+      margin-top: 14px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9.5px;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      padding: 3px 10px;
+      border-radius: 2px;
+      letter-spacing: 0.06em;
+    }
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 18px 20px;
+      text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+    .footer a { color: var(--text-dim); text-decoration: none; }
+    .footer a:hover { color: var(--gold); }
+    .pulse {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      margin-right: 5px;
+      animation: pulse-anim 2s ease infinite;
+      vertical-align: middle;
+    }
+    @keyframes pulse-anim {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">The<em>Desk</em></div>
+  <div class="header-center" id="headerDate">—</div>
+  <div class="header-right">
+    <span id="lastUpdated">—</span>
+    <button class="btn-refresh" id="refreshBtn" onclick="loadAll()">↺ REFRESH</button>
+  </div>
+</header>
+
+<div class="ticker-bar">
+  <div class="ticker-track" id="tickerTrack">
+    <div class="ticker-item"><span class="t-label">LOADING MARKETS</span><span class="t-price">—</span></div>
+  </div>
+</div>
+
+<main class="main">
+  <section class="section">
+    <div class="section-head">
+      <span class="section-icon">🇮🇳</span>
+      <span class="section-title">Indian Markets</span>
+      <span class="section-badge" id="badge-india">—</span>
+    </div>
+    <div id="feed-india"><div class="state-box loading">FETCHING FEEDS</div></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="section-icon">🌍</span>
+      <span class="section-title">Global Macro</span>
+      <span class="section-badge" id="badge-global">—</span>
+    </div>
+    <div id="feed-global"><div class="state-box loading">FETCHING FEEDS</div></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="section-icon">📊</span>
+      <span class="section-title">Watchlist</span>
+      <span class="section-badge" id="badge-watchlist">—</span>
+    </div>
+    <div id="feed-watchlist">
+      <div class="watchlist-empty">
+        <div class="we-icon">📋</div>
+        <p>Share your portfolio watchlist<br>to enable personalised stock news</p>
+        <span class="we-tag">COMING SOON</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <span class="pulse"></span>
+  THE DESK &nbsp;·&nbsp; Hosted on <a href="https://pages.github.com" target="_blank">GitHub Pages</a> &nbsp;·&nbsp; RSS via rss2json &nbsp;·&nbsp; Auto-refreshes every 5 min
+</footer>
+
+<script>
+const RSS_API = 'https://api.rss2json.com/v1/api.json?rss_url=';
+const PROXY   = 'https://corsproxy.io/?';
+const YF_BASE = 'https://query1.finance.yahoo.com/v8/finance/chart/';
+
+const MARKET_SYMBOLS = [
+  { sym: '^NSEI',     label: 'NIFTY 50',    dec: 2 },
+  { sym: '^BSESN',    label: 'SENSEX',       dec: 2 },
+  { sym: '^NSEBANK',  label: 'BANK NIFTY',   dec: 2 },
+  { sym: 'USDINR=X',  label: 'USD/INR',      dec: 4 },
+  { sym: '^INDIAVIX', label: 'INDIA VIX',    dec: 2 },
+];
+
+const INDIA_FEEDS = [
+  { name: 'ET Markets',        url: 'https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms', count: 7 },
+  { name: 'Business Standard', url: 'https://www.business-standard.com/rss/markets-106.rss',               count: 5 },
+  { name: 'Moneycontrol',      url: 'https://www.moneycontrol.com/rss/marketreports.xml',                  count: 5 },
+  { name: 'Livemint',          url: 'https://www.livemint.com/rss/markets',                                count: 4 },
+];
+
+const GLOBAL_FEEDS = [
+  { name: 'BBC Business', url: 'https://feeds.bbci.co.uk/news/business/rss.xml',  count: 6 },
+  { name: 'Reuters',      url: 'https://feeds.reuters.com/reuters/businessNews',   count: 6 },
+  { name: 'FT',           url: 'https://www.ft.com/rss/home/international',        count: 4 },
+];
+
+function timeAgo(str) {
+  if (!str) return '';
+  const diff = Math.floor((Date.now() - new Date(str)) / 60000);
+  if (isNaN(diff) || diff < 0) return 'just now';
+  if (diff < 1) return 'just now';
+  if (diff < 60) return diff + 'm ago';
+  const h = Math.floor(diff / 60);
+  if (h < 24) return h + 'h ago';
+  return Math.floor(h / 24) + 'd ago';
+}
+
+function fmtNum(n, dec) {
+  if (n == null) return '—';
+  return Number(n).toLocaleString('en-IN', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+}
+
+function stripHtml(h) {
+  return (h || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+}
+
+async function fetchQuote(sym) {
+  try {
+    const url = PROXY + encodeURIComponent(YF_BASE + sym + '?interval=1d&range=1d');
+    const res  = await fetch(url, { signal: AbortSignal.timeout(6000) });
+    const json = await res.json();
+    const meta = json?.chart?.result?.[0]?.meta;
+    if (!meta) return null;
+    return { price: meta.regularMarketPrice, prev: meta.previousClose ?? meta.chartPreviousClose };
+  } catch(_) { return null; }
+}
+
+async function loadTicker() {
+  const track = document.getElementById('tickerTrack');
+  track.classList.remove('animate');
+
+  const results = await Promise.allSettled(MARKET_SYMBOLS.map(m => fetchQuote(m.sym)));
+
+  const items = MARKET_SYMBOLS.map((m, i) => {
+    const q = results[i].status === 'fulfilled' ? results[i].value : null;
+    const price = q?.price, prev = q?.prev;
+    const pct = (price && prev) ? ((price - prev) / prev * 100) : null;
+    const dir = pct == null ? '' : pct > 0 ? 'up' : pct < 0 ? 'down' : '';
+    const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '';
+    const chgStr = pct != null ? `${arrow} ${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%` : '';
+    return `<div class="ticker-item">
+      <span class="t-label">${m.label}</span>
+      <span class="t-price">${price ? fmtNum(price, m.dec) : '—'}</span>
+      ${chgStr ? `<span class="t-chg ${dir}">${chgStr}</span>` : ''}
+    </div>`;
+  });
+
+  track.innerHTML = items.join('') + items.join('');
+  track.classList.add('animate');
+}
+
+async function fetchRSS(feed) {
+  try {
+    const url = RSS_API + encodeURIComponent(feed.url) + '&count=' + (feed.count || 6);
+    const res  = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const json = await res.json();
+    if (json.status === 'ok' && Array.isArray(json.items)) {
+      return json.items.map(i => ({ ...i, _src: feed.name }));
+    }
+  } catch(_) {}
+  return [];
+}
+
+async function loadFeed(feeds, containerId, badgeId, max) {
+  const el = document.getElementById(containerId);
+  const badge = document.getElementById(badgeId);
+
+  const settled = await Promise.allSettled(feeds.map(fetchRSS));
+  let all = [];
+  settled.forEach(r => { if (r.status === 'fulfilled') all.push(...r.value); });
+
+  all.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+  const seen = new Set();
+  all = all.filter(i => {
+    const k = (i.title || '').trim().toLowerCase().slice(0, 60);
+    if (seen.has(k)) return false;
+    seen.add(k); return true;
+  }).slice(0, max || 14);
+
+  badge.textContent = all.length || '—';
+
+  if (!all.length) {
+    el.innerHTML = '<div class="state-box">Could not load feeds — try refreshing.</div>';
+    return;
+  }
+
+  el.innerHTML = all.map(item => {
+    const snippet = stripHtml(item.description).slice(0, 130);
+    return `<div class="card">
+      <a href="${item.link || '#'}" target="_blank" rel="noopener noreferrer">
+        <div class="card-title">${item.title || 'Untitled'}</div>
+        ${snippet ? `<div class="card-snippet">${snippet}…</div>` : ''}
+        <div class="card-meta">
+          <span class="card-source">${item._src}</span>
+          <span>·</span>
+          <span>${timeAgo(item.pubDate)}</span>
+        </div>
+      </a>
+    </div>`;
+  }).join('');
+}
+
+function updateHeader() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('headerDate').textContent = dateStr.toUpperCase();
+  const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('lastUpdated').innerHTML = '<span class="pulse"></span>Updated ' + timeStr + ' IST';
+}
+
+let refreshTimer;
+async function loadAll() {
+  const btn = document.getElementById('refreshBtn');
+  btn.disabled = true;
+  btn.textContent = '↺ LOADING';
+  document.getElementById('feed-india').innerHTML  = '<div class="state-box loading">FETCHING FEEDS</div>';
+  document.getElementById('feed-global').innerHTML = '<div class="state-box loading">FETCHING FEEDS</div>';
+
+  await Promise.allSettled([
+    loadTicker(),
+    loadFeed(INDIA_FEEDS,  'feed-india',  'badge-india',  14),
+    loadFeed(GLOBAL_FEEDS, 'feed-global', 'badge-global', 12),
+  ]);
+
+  updateHeader();
+  btn.disabled = false;
+  btn.textContent = '↺ REFRESH';
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(loadAll, 5 * 60 * 1000);
+}
+
+updateHeader();
+setInterval(updateHeader, 60000);
+loadAll();
+</script>
+</body>
+</html>
