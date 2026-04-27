@@ -166,19 +166,21 @@
   line-height: 1.45; margin-bottom: 5px; transition: color 0.15s;
 }
 .card a:hover .card-title { color: var(--gold-bright); }
+.card-snippet {
+  font-size: 11.5px; color: var(--text-dim); line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 5px;
+}
 .card-meta {
   display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
   font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-muted);
 }
 .card-source { color: var(--gold); }
-
-/* THEME TAG */
-.theme-tag {
-  display: inline-block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px; letter-spacing: 0.05em;
-  padding: 1px 6px; border-radius: 2px;
-  border: 1px solid; opacity: 0.85;
+.card-img {
+  width: 100%; height: 130px;
+  object-fit: cover; border-radius: 3px;
+  margin-bottom: 8px; opacity: 0.85;
+  display: block;
 }
 
 /* STATES */
@@ -240,7 +242,7 @@
       <span class="section-title">India</span>
       <span class="section-badge" id="badge-india">—</span>
     </div>
-    <div id="feed-india"><div class="state-box loading">FETCHING FEEDS</div></div>
+    <div id="feed-india"><div class="state-box loading">FETCHING</div></div>
   </section>
 
   <section class="section">
@@ -249,7 +251,7 @@
       <span class="section-title">World</span>
       <span class="section-badge" id="badge-global">—</span>
     </div>
-    <div id="feed-global"><div class="state-box loading">FETCHING FEEDS</div></div>
+    <div id="feed-global"><div class="state-box loading">FETCHING</div></div>
   </section>
 
   <section class="section">
@@ -258,72 +260,43 @@
       <span class="section-title">Watchlist</span>
       <span class="section-badge" id="badge-watchlist">—</span>
     </div>
-    <div id="feed-watchlist"><div class="state-box loading">FETCHING FEEDS</div></div>
+    <div id="feed-watchlist"><div class="state-box loading">FETCHING</div></div>
   </section>
 </main>
 
 <footer class="footer">
   <span class="pulse"></span>
-  THE DESK &nbsp;·&nbsp; <a href="https://pages.github.com" target="_blank">GitHub Pages</a> &nbsp;·&nbsp; Google News RSS &nbsp;·&nbsp; Auto-refreshes every 5 min
+  THE DESK &nbsp;·&nbsp; <a href="https://pages.github.com" target="_blank">GitHub Pages</a> &nbsp;·&nbsp; Powered by NewsAPI &nbsp;·&nbsp; Refreshes once daily
 </footer>
 
 <script>
 // ── CONFIG ───────────────────────────────────────────────────────────
-const ALLORIGINS = 'https://api.allorigins.win/get?url=';
-const PROXY_YF   = 'https://corsproxy.io/?';
-const YF_BASE    = 'https://query1.finance.yahoo.com/v8/finance/chart/';
+const API_KEY  = '26c722673003494586001f6a36bea9de';
+const BASE_URL = 'https://newsapi.org/v2/everything';
+const PROXY_YF = 'https://corsproxy.io/?';
+const YF_BASE  = 'https://query1.finance.yahoo.com/v8/finance/chart/';
 
-function gn(query, region) {
-  const loc = region === 'IN' ? 'hl=en-IN&gl=IN&ceid=IN:en' : 'hl=en&gl=US&ceid=US:en';
-  return 'https://news.google.com/rss/search?q=' + encodeURIComponent(query) + '&' + loc;
-}
-
-// Wide-net: top stories + broad business sweep
-const INDIA_FEEDS = [
-  { url: 'https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en' },
-  { url: gn('india business economy finance', 'IN') },
-  { url: gn('india markets stocks RBI SEBI rupee', 'IN') },
-];
-
-const GLOBAL_FEEDS = [
-  { url: 'https://news.google.com/rss?hl=en&gl=US&ceid=US:en' },
-  { url: gn('global economy business finance trade', 'US') },
-  { url: gn('inflation interest rates oil dollar Fed macro', 'US') },
-];
-
-// Watchlist: keyword-per-theme, color-coded
-const WATCHLIST_FEEDS = [
-  {
-    theme: 'BFSI',
-    color: '#9b6fd4',
-    url: gn('"HDFC Bank" OR "ICICI Bank" OR "Axis Bank" OR "Kotak Bank" OR "SBI" OR "Jio Financial" OR "CAMS" OR "CDSL" OR "India banking" OR "Indian banks"', 'IN'),
+// Cache key prefix + TTL (once per day)
+const QUERIES = {
+  india: {
+    q: '(Nifty OR Sensex OR "Indian market" OR RBI OR SEBI OR "Indian economy" OR "Indian rupee" OR FII OR DII OR "India GDP" OR "India inflation") AND (india OR indian)',
+    language: 'en',
+    sortBy: 'publishedAt',
+    pageSize: 20,
   },
-  {
-    theme: 'Premiumisation',
-    color: '#c8903c',
-    url: gn('"Radico Khaitan" OR "Titan Company" OR "Ethos" OR "Manyavar" OR "Indian Hotels" OR "ITC Hotels" OR "SJS Enterprises" OR "Reliance Industries" OR "ITC Limited" OR "India luxury" OR "India premium"', 'IN'),
+  global: {
+    q: '"Federal Reserve" OR "Fed rate" OR "Bank of Japan" OR ECB OR PBOC OR "China economy" OR "Japan economy" OR "Asian markets" OR "emerging markets" OR "EM flows" OR "dollar index" OR "bond yields" OR "oil prices" OR "crude oil" OR "commodity prices" OR "gold price" OR inflation OR "trade war" OR "Middle East" OR Iran OR geopolitics OR "US economy" OR "global recession" OR yuan OR yen OR "US-China"',
+    language: 'en',
+    sortBy: 'publishedAt',
+    pageSize: 20,
   },
-  {
-    theme: 'Mass Formal.',
-    color: '#3aad65',
-    url: gn('"Uno Minda" OR "Aptus Value" OR "Home First Finance" OR "DMart" OR "Hero MotoCorp" OR "Emami" OR "CCAvenue" OR "Pine Labs" OR "TVS Motor" OR "Samvardhana Motherson" OR "Motherson Sumi" OR "Minda Industries"', 'IN'),
+  watchlist: {
+    q: '"HDFC Bank" OR "ICICI Bank" OR "Axis Bank" OR "Kotak Bank" OR "State Bank of India" OR "Jio Financial" OR "CAMS" OR "CDSL" OR "Radico Khaitan" OR "Titan Company" OR "Ethos Ltd" OR "Manyavar" OR "Indian Hotels" OR "ITC Hotels" OR "ITC Ltd" OR "SJS Enterprises" OR "Reliance Industries" OR "Uno Minda" OR "Minda Industries" OR "Home First Finance" OR "DMart" OR "Hero MotoCorp" OR "Emami" OR "CCAvenue" OR "Infibeam" OR "Pine Labs" OR "TVS Motor" OR "Motherson Sumi" OR "Premier Energies" OR "NTPC Green" OR "JSW Energy" OR "Suzlon" OR "KEC International" OR "Apar Industries" OR "Netweb Technologies" OR "Dixon Technologies" OR "Anant Raj" OR "Techno Electric" OR "E2E Networks" OR "Infosys" OR "Tech Mahindra" OR "KIMS" OR "Dr Lal PathLabs" OR "Vijaya Diagnostic" OR "Krsnaa"',
+    language: 'en',
+    sortBy: 'publishedAt',
+    pageSize: 20,
   },
-  {
-    theme: 'Energy Trans.',
-    color: '#e07a30',
-    url: gn('"Premier Energies" OR "NTPC Green" OR "JSW Energy" OR "Suzlon" OR "KEC International" OR "Apar Industries" OR "India renewable" OR "India solar"', 'IN'),
-  },
-  {
-    theme: 'Digital Infra',
-    color: '#4a90d0',
-    url: gn('"Netweb Technologies" OR "Dixon Technologies" OR "Anant Raj" OR "Techno Electric" OR "E2E Networks" OR "Infosys" OR "Tech Mahindra" OR "India data center" OR "India digital infra"', 'IN'),
-  },
-  {
-    theme: 'Healthcare',
-    color: '#4ec9c9',
-    url: gn('"KIMS" OR "Krsnaa Diagnostics" OR "Dr Lal PathLabs" OR "Vijaya Diagnostic" OR "India diagnostics" OR "India healthcare"', 'IN'),
-  },
-];
+};
 
 const MARKET_SYMBOLS = [
   { sym: '^NSEI',     label: 'NIFTY 50',   dec: 2 },
@@ -350,78 +323,93 @@ function fmtNum(n, dec) {
   return Number(n).toLocaleString('en-IN', { minimumFractionDigits: dec, maximumFractionDigits: dec });
 }
 
-function extractSource(el, rawTitle) {
-  const src = el.querySelector('source');
-  if (src?.textContent?.trim()) return src.textContent.trim();
-  const m = (rawTitle || '').match(/ - ([^-]{2,40})$/);
-  return m ? m[1].trim() : '';
+// ── CACHE (once per calendar day via localStorage) ───────────────────
+function todayKey(key) {
+  const d = new Date();
+  const dateStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  return key + '_' + dateStr;
 }
 
-function cleanTitle(title) {
-  return (title || '').replace(/ - [^-]{2,50}$/, '').trim();
-}
-
-// ── FETCH ONE FEED ────────────────────────────────────────────────────
-async function fetchFeed(feedObj) {
-  const url = typeof feedObj === 'string' ? feedObj : feedObj.url;
+function cacheGet(key) {
   try {
-    const res  = await fetch(ALLORIGINS + encodeURIComponent(url), { signal: AbortSignal.timeout(10000) });
-    const json = await res.json();
-    if (!json.contents) return [];
-    const doc   = new DOMParser().parseFromString(json.contents, 'text/xml');
-    return Array.from(doc.querySelectorAll('item')).map(el => {
-      const rawTitle = el.querySelector('title')?.textContent?.trim() || '';
-      return {
-        title:   cleanTitle(rawTitle),
-        link:    el.querySelector('link')?.textContent?.trim() || '',
-        pubDate: el.querySelector('pubDate')?.textContent?.trim() || '',
-        source:  extractSource(el, rawTitle),
-        theme:   feedObj.theme  || null,
-        color:   feedObj.color  || null,
-      };
-    }).filter(i => i.title);
-  } catch(_) { return []; }
+    const raw = localStorage.getItem(todayKey(key));
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(_) { return null; }
 }
 
-// ── GENERIC PANEL LOADER ──────────────────────────────────────────────
-async function loadFeed(feeds, containerId, badgeId, max) {
+function cacheSet(key, data) {
+  try {
+    // Prune old keys to keep localStorage clean
+    Object.keys(localStorage).forEach(k => {
+      if (k.startsWith('desk_') && k !== todayKey(key)) localStorage.removeItem(k);
+    });
+    localStorage.setItem(todayKey(key), JSON.stringify(data));
+  } catch(_) {}
+}
+
+// ── NEWSAPI FETCH ─────────────────────────────────────────────────────
+async function fetchNews(panelKey) {
+  const cached = cacheGet('desk_' + panelKey);
+  if (cached) return cached;
+
+  const params = new URLSearchParams({ ...QUERIES[panelKey], apiKey: API_KEY });
+  const res  = await fetch(BASE_URL + '?' + params.toString(), { signal: AbortSignal.timeout(12000) });
+  const json = await res.json();
+
+  if (json.status !== 'ok') throw new Error(json.message || 'NewsAPI error');
+
+  const articles = (json.articles || [])
+    .filter(a => a.title && a.title !== '[Removed]')
+    .map(a => ({
+      title:   a.title,
+      desc:    a.description || '',
+      url:     a.url,
+      source:  a.source?.name || '',
+      image:   a.urlToImage || null,
+      pubDate: a.publishedAt,
+    }));
+
+  cacheSet('desk_' + panelKey, articles);
+  return articles;
+}
+
+// ── PANEL RENDERER ────────────────────────────────────────────────────
+async function loadPanel(panelKey, containerId, badgeId, showImages) {
   const el    = document.getElementById(containerId);
   const badge = document.getElementById(badgeId);
 
-  const settled = await Promise.allSettled(feeds.map(fetchFeed));
-  let all = [];
-  settled.forEach(r => { if (r.status === 'fulfilled') all.push(...r.value); });
+  try {
+    const articles = await fetchNews(panelKey);
+    badge.textContent = articles.length || '—';
 
-  all.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-  const seen = new Set();
-  all = all.filter(item => {
-    const k = item.title.toLowerCase().slice(0, 70);
-    if (seen.has(k)) return false;
-    seen.add(k); return true;
-  }).slice(0, max || 20);
+    if (!articles.length) {
+      el.innerHTML = '<div class="state-box">No articles found.</div>';
+      return;
+    }
 
-  badge.textContent = all.length || '—';
-
-  if (!all.length) {
-    el.innerHTML = '<div class="state-box">No articles loaded — check your connection.</div>';
-    return;
+    el.innerHTML = articles.map((a, i) => {
+      const imgHtml = (showImages && i === 0 && a.image)
+        ? `<img class="card-img" src="${a.image}" alt="" loading="lazy" onerror="this.style.display='none'">`
+        : '';
+      const snippet = a.desc ? a.desc.slice(0, 120) + '…' : '';
+      return `<div class="card">
+        <a href="${a.url}" target="_blank" rel="noopener noreferrer">
+          ${imgHtml}
+          <div class="card-title">${a.title}</div>
+          ${snippet ? `<div class="card-snippet">${snippet}</div>` : ''}
+          <div class="card-meta">
+            <span class="card-source">${a.source}</span>
+            <span>·</span>
+            <span>${timeAgo(a.pubDate)}</span>
+          </div>
+        </a>
+      </div>`;
+    }).join('');
+  } catch(err) {
+    badge.textContent = '!';
+    el.innerHTML = `<div class="state-box">Failed to load — ${err.message}</div>`;
   }
-
-  el.innerHTML = all.map(item => {
-    const themeTag = item.theme
-      ? `<span class="theme-tag" style="color:${item.color};border-color:${item.color}22;background:${item.color}11">${item.theme}</span>`
-      : '';
-    return `<div class="card">
-      <a href="${item.link || '#'}" target="_blank" rel="noopener noreferrer">
-        <div class="card-title">${item.title}</div>
-        <div class="card-meta">
-          ${item.source ? `<span class="card-source">${item.source}</span><span>·</span>` : ''}
-          <span>${timeAgo(item.pubDate)}</span>
-          ${themeTag ? `<span>·</span>${themeTag}` : ''}
-        </div>
-      </a>
-    </div>`;
-  }).join('');
 }
 
 // ── MARKET TICKER ─────────────────────────────────────────────────────
@@ -467,32 +455,53 @@ function updateHeader() {
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────
-let refreshTimer;
 async function loadAll() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true;
   btn.textContent = '↺ LOADING';
+
+  // Clear today's cache on manual refresh so user can force a fresh pull
+  ['india','global','watchlist'].forEach(k => {
+    try { localStorage.removeItem(todayKey('desk_' + k)); } catch(_) {}
+  });
+
   ['feed-india','feed-global','feed-watchlist'].forEach(id => {
-    document.getElementById(id).innerHTML = '<div class="state-box loading">FETCHING FEEDS</div>';
+    document.getElementById(id).innerHTML = '<div class="state-box loading">FETCHING</div>';
   });
 
   await Promise.allSettled([
     loadTicker(),
-    loadFeed(INDIA_FEEDS,     'feed-india',     'badge-india',     20),
-    loadFeed(GLOBAL_FEEDS,    'feed-global',    'badge-global',    18),
-    loadFeed(WATCHLIST_FEEDS, 'feed-watchlist', 'badge-watchlist', 20),
+    loadPanel('india',     'feed-india',     'badge-india',     true),
+    loadPanel('global',    'feed-global',    'badge-global',    true),
+    loadPanel('watchlist', 'feed-watchlist', 'badge-watchlist', false),
   ]);
 
   updateHeader();
   btn.disabled = false;
   btn.textContent = '↺ REFRESH';
-  clearTimeout(refreshTimer);
-  refreshTimer = setTimeout(loadAll, 5 * 60 * 1000);
 }
 
 updateHeader();
 setInterval(updateHeader, 60000);
-loadAll();
+
+// On page load: serve from cache if available, else fetch
+(async () => {
+  const btn = document.getElementById('refreshBtn');
+  btn.disabled = true;
+  btn.textContent = '↺ LOADING';
+  ['feed-india','feed-global','feed-watchlist'].forEach(id => {
+    document.getElementById(id).innerHTML = '<div class="state-box loading">FETCHING</div>';
+  });
+  await Promise.allSettled([
+    loadTicker(),
+    loadPanel('india',     'feed-india',     'badge-india',     true),
+    loadPanel('global',    'feed-global',    'badge-global',    true),
+    loadPanel('watchlist', 'feed-watchlist', 'badge-watchlist', false),
+  ]);
+  updateHeader();
+  btn.disabled = false;
+  btn.textContent = '↺ REFRESH';
+})();
 </script>
 
 </body>
