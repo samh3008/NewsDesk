@@ -81,8 +81,6 @@
     }
     .btn-refresh:hover { background: var(--gold-dim); }
     .btn-refresh:disabled { opacity: 0.4; cursor: default; }
-
-    /* TICKER */
     .ticker-bar {
       background: var(--surface2);
       border-bottom: 1px solid var(--border);
@@ -119,8 +117,6 @@
     .t-chg { font-size: 10.5px; }
     .t-chg.up   { color: var(--green); }
     .t-chg.down { color: var(--red); }
-
-    /* GRID */
     .main {
       max-width: 1280px; margin: 0 auto;
       padding: 24px 20px 40px;
@@ -136,8 +132,6 @@
       .section:nth-child(3) { grid-column: auto; }
       .header-center { display: none; }
     }
-
-    /* SECTION */
     .section-head {
       display: flex; align-items: center; gap: 9px;
       margin-bottom: 16px; padding-bottom: 12px;
@@ -154,8 +148,28 @@
       color: var(--text-dim); background: var(--surface3);
       border: 1px solid var(--border); padding: 1px 7px; border-radius: 2px;
     }
-
-    /* CARDS */
+    .filter-bar {
+      margin-bottom: 14px;
+      display: none;
+    }
+    .filter-bar select {
+      width: 100%;
+      background: var(--surface3);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 3px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235a6680'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+    .filter-bar select:focus { border-color: var(--gold-dim); }
     .card { padding: 11px 0; border-bottom: 1px solid var(--border-soft); }
     .card:last-child { border-bottom: none; }
     .card a { text-decoration: none; color: inherit; display: block; }
@@ -174,14 +188,19 @@
       font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-muted);
     }
     .card-source { color: var(--gold); }
+    .company-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px; letter-spacing: 0.04em;
+      padding: 1px 6px; border-radius: 2px;
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      color: var(--gold);
+    }
     .card-img {
       width: 100%; height: 130px;
       object-fit: cover; border-radius: 3px;
       margin-bottom: 8px; opacity: 0.85;
-      display: block;
     }
-
-    /* STATES */
     .state-box {
       padding: 28px 0; text-align: center;
       font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim);
@@ -195,8 +214,6 @@
       from { width: 8px; opacity: 0.4; }
       to   { width: 40px; opacity: 1; }
     }
-
-    /* FOOTER */
     .footer {
       border-top: 1px solid var(--border); padding: 18px 20px;
       text-align: center; font-family: 'IBM Plex Mono', monospace;
@@ -256,6 +273,11 @@
       <span class="section-title">Watchlist</span>
       <span class="section-badge" id="badge-watchlist">—</span>
     </div>
+    <div class="filter-bar" id="watchlist-filter-bar">
+      <select id="watchlist-filter" onchange="filterWatchlist(this.value)">
+        <option value="all">All companies</option>
+      </select>
+    </div>
     <div id="feed-watchlist"><div class="state-box loading">FETCHING</div></div>
   </section>
 </main>
@@ -266,12 +288,10 @@
 </footer>
 
 <script>
-// ── CONFIG ───────────────────────────────────────────────────────────
 const WORKER_URL = 'https://thedesk.shubhmathur3008.workers.dev';
 const PROXY_YF   = 'https://corsproxy.io/?';
 const YF_BASE    = 'https://query1.finance.yahoo.com/v8/finance/chart/';
 
-// Cache key prefix + TTL (once per day)
 const MARKET_SYMBOLS = [
   { sym: '^NSEI',     label: 'NIFTY 50',   dec: 2 },
   { sym: '^BSESN',    label: 'SENSEX',     dec: 2 },
@@ -297,24 +317,22 @@ function fmtNum(n, dec) {
   return Number(n).toLocaleString('en-IN', { minimumFractionDigits: dec, maximumFractionDigits: dec });
 }
 
-// ── CACHE (once per calendar day via localStorage) ───────────────────
+// ── CACHE (once per calendar day) ────────────────────────────────────
 function todayKey(key) {
   const d = new Date();
-  const dateStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-  return key + '_' + dateStr;
+  const ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  return key + '_' + ds;
 }
 
 function cacheGet(key) {
   try {
     const raw = localStorage.getItem(todayKey(key));
-    if (!raw) return null;
-    return JSON.parse(raw);
+    return raw ? JSON.parse(raw) : null;
   } catch(_) { return null; }
 }
 
 function cacheSet(key, data) {
   try {
-    // Prune old keys to keep localStorage clean
     Object.keys(localStorage).forEach(k => {
       if (k.startsWith('desk_') && k !== todayKey(key)) localStorage.removeItem(k);
     });
@@ -322,7 +340,7 @@ function cacheSet(key, data) {
   } catch(_) {}
 }
 
-// ── FETCH VIA CLOUDFLARE WORKER ──────────────────────────────────────
+// ── FETCH VIA WORKER ──────────────────────────────────────────────────
 async function fetchNews(panelKey) {
   const cached = cacheGet('desk_' + panelKey);
   if (cached) return cached;
@@ -339,15 +357,16 @@ async function fetchNews(panelKey) {
       desc:    a.description || '',
       url:     a.url,
       source:  a.source?.name || '',
-      image:   a.urlToImage || null,
+      image:   a.urlToImage  || null,
       pubDate: a.publishedAt,
+      company: a.company     || null,   // pre-tagged by Worker for watchlist
     }));
 
   cacheSet('desk_' + panelKey, articles);
   return articles;
 }
 
-// ── PANEL RENDERER ────────────────────────────────────────────────────
+// ── STANDARD PANEL RENDERER ───────────────────────────────────────────
 async function loadPanel(panelKey, containerId, badgeId, showImages) {
   const el    = document.getElementById(containerId);
   const badge = document.getElementById(badgeId);
@@ -383,6 +402,82 @@ async function loadPanel(panelKey, containerId, badgeId, showImages) {
     badge.textContent = '!';
     el.innerHTML = `<div class="state-box">Failed to load — ${err.message}</div>`;
   }
+}
+
+// ── WATCHLIST PANEL ───────────────────────────────────────────────────
+let _watchlistAll = [];
+
+async function loadWatchlist() {
+  const el        = document.getElementById('feed-watchlist');
+  const badge     = document.getElementById('badge-watchlist');
+  const filterBar = document.getElementById('watchlist-filter-bar');
+  const select    = document.getElementById('watchlist-filter');
+
+  try {
+    const articles = await fetchNews('watchlist');
+    _watchlistAll  = articles;
+
+    badge.textContent = articles.length || '—';
+
+    // Build company counts from Worker-tagged company field
+    const counts = {};
+    articles.forEach(a => {
+      const co = a.company || 'Other';
+      counts[co] = (counts[co] || 0) + 1;
+    });
+
+    // Populate dropdown sorted by count desc
+    select.innerHTML = `<option value="all">All companies (${articles.length})</option>`;
+    Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([name, count]) => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = `${name}  (${count})`;
+        select.appendChild(opt);
+      });
+
+    filterBar.style.display = 'block';
+    renderWatchlist('all');
+  } catch(err) {
+    badge.textContent = '!';
+    el.innerHTML = `<div class="state-box">Failed to load — ${err.message}</div>`;
+  }
+}
+
+function filterWatchlist(company) {
+  renderWatchlist(company);
+}
+
+function renderWatchlist(filter) {
+  const el       = document.getElementById('feed-watchlist');
+  const filtered = filter === 'all'
+    ? _watchlistAll
+    : _watchlistAll.filter(a => a.company === filter);
+
+  if (!filtered.length) {
+    el.innerHTML = '<div class="state-box">No articles for this company.</div>';
+    return;
+  }
+
+  el.innerHTML = filtered.map(a => {
+    const snippet = a.desc ? a.desc.slice(0, 120) + '…' : '';
+    const coTag   = a.company
+      ? `<span>·</span><span class="company-tag">${a.company}</span>`
+      : '';
+    return `<div class="card">
+      <a href="${a.url}" target="_blank" rel="noopener noreferrer">
+        <div class="card-title">${a.title}</div>
+        ${snippet ? `<div class="card-snippet">${snippet}</div>` : ''}
+        <div class="card-meta">
+          <span class="card-source">${a.source}</span>
+          <span>·</span>
+          <span>${timeAgo(a.pubDate)}</span>
+          ${coTag}
+        </div>
+      </a>
+    </div>`;
+  }).join('');
 }
 
 // ── MARKET TICKER ─────────────────────────────────────────────────────
@@ -433,7 +528,6 @@ async function loadAll() {
   btn.disabled = true;
   btn.textContent = '↺ LOADING';
 
-  // Clear today's cache on manual refresh so user can force a fresh pull
   ['india','global','watchlist'].forEach(k => {
     try { localStorage.removeItem(todayKey('desk_' + k)); } catch(_) {}
   });
@@ -441,12 +535,13 @@ async function loadAll() {
   ['feed-india','feed-global','feed-watchlist'].forEach(id => {
     document.getElementById(id).innerHTML = '<div class="state-box loading">FETCHING</div>';
   });
+  document.getElementById('watchlist-filter-bar').style.display = 'none';
 
   await Promise.allSettled([
     loadTicker(),
-    loadPanel('india',     'feed-india',     'badge-india',     true),
-    loadPanel('global',    'feed-global',    'badge-global',    true),
-    loadPanel('watchlist', 'feed-watchlist', 'badge-watchlist', false),
+    loadPanel('india',  'feed-india',  'badge-india',  true),
+    loadPanel('global', 'feed-global', 'badge-global', true),
+    loadWatchlist(),
   ]);
 
   updateHeader();
@@ -457,7 +552,7 @@ async function loadAll() {
 updateHeader();
 setInterval(updateHeader, 60000);
 
-// On page load: serve from cache if available, else fetch
+// Boot: serve from cache if available, else fetch fresh
 (async () => {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true;
@@ -465,12 +560,14 @@ setInterval(updateHeader, 60000);
   ['feed-india','feed-global','feed-watchlist'].forEach(id => {
     document.getElementById(id).innerHTML = '<div class="state-box loading">FETCHING</div>';
   });
+
   await Promise.allSettled([
     loadTicker(),
-    loadPanel('india',     'feed-india',     'badge-india',     true),
-    loadPanel('global',    'feed-global',    'badge-global',    true),
-    loadPanel('watchlist', 'feed-watchlist', 'badge-watchlist', false),
+    loadPanel('india',  'feed-india',  'badge-india',  true),
+    loadPanel('global', 'feed-global', 'badge-global', true),
+    loadWatchlist(),
   ]);
+
   updateHeader();
   btn.disabled = false;
   btn.textContent = '↺ REFRESH';
