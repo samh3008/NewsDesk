@@ -414,28 +414,35 @@ async function loadWatchlist() {
   const select    = document.getElementById('watchlist-filter');
 
   try {
-    const articles = await fetchNews('watchlist');
-    _watchlistAll  = articles;
+    const raw = await fetchNews('watchlist');
+    badge.textContent = raw.length || '—';
 
-    badge.textContent = articles.length || '—';
+    // Normalise null -> 'Other' so filter comparisons always work
+    _watchlistAll = raw.map(a => ({ ...a, company: a.company || 'Other' }));
 
-    // Build company counts from Worker-tagged company field
+    // Build company counts
     const counts = {};
-    articles.forEach(a => {
-      const co = a.company || 'Other';
-      counts[co] = (counts[co] || 0) + 1;
+    _watchlistAll.forEach(a => {
+      counts[a.company] = (counts[a.company] || 0) + 1;
     });
 
-    // Populate dropdown sorted by count desc
-    select.innerHTML = `<option value="all">All companies (${articles.length})</option>`;
-    Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .forEach(([name, count]) => {
-        const opt = document.createElement('option');
-        opt.value = name;
-        opt.textContent = `${name}  (${count})`;
-        select.appendChild(opt);
-      });
+    // Populate dropdown: tagged companies first (sorted by count), Other last
+    const tagged  = Object.entries(counts).filter(([n]) => n !== 'Other').sort((a,b) => b[1]-a[1]);
+    const otherCt = counts['Other'] || 0;
+
+    select.innerHTML = `<option value="all">All companies (${_watchlistAll.length})</option>`;
+    tagged.forEach(([name, count]) => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = `${name}  (${count})`;
+      select.appendChild(opt);
+    });
+    if (otherCt > 0) {
+      const opt = document.createElement('option');
+      opt.value = 'Other';
+      opt.textContent = `Other / Untagged  (${otherCt})`;
+      select.appendChild(opt);
+    }
 
     filterBar.style.display = 'block';
     renderWatchlist('all');
