@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -83,139 +82,136 @@
     .btn-refresh:hover { background: var(--gold-dim); }
     .btn-refresh:disabled { opacity: 0.4; cursor: default; }
 
-```
-/* TICKER */
-.ticker-bar {
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border);
-  height: 34px;
-  overflow: hidden;
-  position: relative;
-}
-.ticker-bar::before, .ticker-bar::after {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0; width: 60px;
-  z-index: 2; pointer-events: none;
-}
-.ticker-bar::before { left: 0; background: linear-gradient(to right, var(--surface2), transparent); }
-.ticker-bar::after  { right: 0; background: linear-gradient(to left, var(--surface2), transparent); }
-.ticker-track {
-  display: flex; align-items: center;
-  height: 100%; white-space: nowrap;
-}
-.ticker-track.animate { animation: scroll-ticker 55s linear infinite; }
-.ticker-track:hover { animation-play-state: paused; }
-@keyframes scroll-ticker {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.ticker-item {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 0 22px;
-  font-family: 'IBM Plex Mono', monospace; font-size: 11.5px;
-  border-right: 1px solid var(--border-soft); height: 100%;
-}
-.t-label { color: var(--text-dim); font-size: 10px; letter-spacing: 0.05em; }
-.t-price { color: var(--text-bright); font-weight: 500; }
-.t-chg { font-size: 10.5px; }
-.t-chg.up   { color: var(--green); }
-.t-chg.down { color: var(--red); }
+    /* TICKER */
+    .ticker-bar {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      height: 34px;
+      overflow: hidden;
+      position: relative;
+    }
+    .ticker-bar::before, .ticker-bar::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; width: 60px;
+      z-index: 2; pointer-events: none;
+    }
+    .ticker-bar::before { left: 0; background: linear-gradient(to right, var(--surface2), transparent); }
+    .ticker-bar::after  { right: 0; background: linear-gradient(to left, var(--surface2), transparent); }
+    .ticker-track {
+      display: flex; align-items: center;
+      height: 100%; white-space: nowrap;
+    }
+    .ticker-track.animate { animation: scroll-ticker 55s linear infinite; }
+    .ticker-track:hover { animation-play-state: paused; }
+    @keyframes scroll-ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-item {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 0 22px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 11.5px;
+      border-right: 1px solid var(--border-soft); height: 100%;
+    }
+    .t-label { color: var(--text-dim); font-size: 10px; letter-spacing: 0.05em; }
+    .t-price { color: var(--text-bright); font-weight: 500; }
+    .t-chg { font-size: 10.5px; }
+    .t-chg.up   { color: var(--green); }
+    .t-chg.down { color: var(--red); }
 
-/* GRID */
-.main {
-  max-width: 1280px; margin: 0 auto;
-  padding: 24px 20px 40px;
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 24px; align-items: start;
-}
-@media (max-width: 980px) {
-  .main { grid-template-columns: 1fr 1fr; }
-  .section:nth-child(3) { grid-column: 1 / -1; }
-}
-@media (max-width: 620px) {
-  .main { grid-template-columns: 1fr; padding: 16px 14px 32px; gap: 28px; }
-  .section:nth-child(3) { grid-column: auto; }
-  .header-center { display: none; }
-}
+    /* GRID */
+    .main {
+      max-width: 1280px; margin: 0 auto;
+      padding: 24px 20px 40px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px; align-items: start;
+    }
+    @media (max-width: 980px) {
+      .main { grid-template-columns: 1fr 1fr; }
+      .section:nth-child(3) { grid-column: 1 / -1; }
+    }
+    @media (max-width: 620px) {
+      .main { grid-template-columns: 1fr; padding: 16px 14px 32px; gap: 28px; }
+      .section:nth-child(3) { grid-column: auto; }
+      .header-center { display: none; }
+    }
 
-/* SECTION */
-.section-head {
-  display: flex; align-items: center; gap: 9px;
-  margin-bottom: 16px; padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-.section-icon { font-size: 15px; }
-.section-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 15px; font-weight: 600; color: var(--text-bright);
-}
-.section-badge {
-  margin-left: auto;
-  font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
-  color: var(--text-dim); background: var(--surface3);
-  border: 1px solid var(--border); padding: 1px 7px; border-radius: 2px;
-}
+    /* SECTION */
+    .section-head {
+      display: flex; align-items: center; gap: 9px;
+      margin-bottom: 16px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-icon { font-size: 15px; }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px; font-weight: 600; color: var(--text-bright);
+    }
+    .section-badge {
+      margin-left: auto;
+      font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+      color: var(--text-dim); background: var(--surface3);
+      border: 1px solid var(--border); padding: 1px 7px; border-radius: 2px;
+    }
 
-/* CARDS */
-.card { padding: 11px 0; border-bottom: 1px solid var(--border-soft); }
-.card:last-child { border-bottom: none; }
-.card a { text-decoration: none; color: inherit; display: block; }
-.card-title {
-  font-size: 13px; font-weight: 500; color: var(--text-bright);
-  line-height: 1.45; margin-bottom: 5px; transition: color 0.15s;
-}
-.card a:hover .card-title { color: var(--gold-bright); }
-.card-snippet {
-  font-size: 11.5px; color: var(--text-dim); line-height: 1.5;
-  display: -webkit-box; -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 5px;
-}
-.card-meta {
-  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-  font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-muted);
-}
-.card-source { color: var(--gold); }
-.card-img {
-  width: 100%; height: 130px;
-  object-fit: cover; border-radius: 3px;
-  margin-bottom: 8px; opacity: 0.85;
-  display: block;
-}
+    /* CARDS */
+    .card { padding: 11px 0; border-bottom: 1px solid var(--border-soft); }
+    .card:last-child { border-bottom: none; }
+    .card a { text-decoration: none; color: inherit; display: block; }
+    .card-title {
+      font-size: 13px; font-weight: 500; color: var(--text-bright);
+      line-height: 1.45; margin-bottom: 5px; transition: color 0.15s;
+    }
+    .card a:hover .card-title { color: var(--gold-bright); }
+    .card-snippet {
+      font-size: 11.5px; color: var(--text-dim); line-height: 1.5;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 5px;
+    }
+    .card-meta {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-muted);
+    }
+    .card-source { color: var(--gold); }
+    .card-img {
+      width: 100%; height: 130px;
+      object-fit: cover; border-radius: 3px;
+      margin-bottom: 8px; opacity: 0.85;
+      display: block;
+    }
 
-/* STATES */
-.state-box {
-  padding: 28px 0; text-align: center;
-  font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim);
-}
-.state-box.loading::after {
-  content: ''; display: block; margin: 12px auto 0;
-  width: 24px; height: 2px; background: var(--gold-dim);
-  animation: load-bar 0.9s ease-in-out infinite alternate; border-radius: 2px;
-}
-@keyframes load-bar {
-  from { width: 8px; opacity: 0.4; }
-  to   { width: 40px; opacity: 1; }
-}
+    /* STATES */
+    .state-box {
+      padding: 28px 0; text-align: center;
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim);
+    }
+    .state-box.loading::after {
+      content: ''; display: block; margin: 12px auto 0;
+      width: 24px; height: 2px; background: var(--gold-dim);
+      animation: load-bar 0.9s ease-in-out infinite alternate; border-radius: 2px;
+    }
+    @keyframes load-bar {
+      from { width: 8px; opacity: 0.4; }
+      to   { width: 40px; opacity: 1; }
+    }
 
-/* FOOTER */
-.footer {
-  border-top: 1px solid var(--border); padding: 18px 20px;
-  text-align: center; font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px; color: var(--text-muted); letter-spacing: 0.04em;
-}
-.footer a { color: var(--text-dim); text-decoration: none; }
-.footer a:hover { color: var(--gold); }
-.pulse {
-  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--green); margin-right: 5px;
-  animation: pulse-anim 2s ease infinite; vertical-align: middle;
-}
-@keyframes pulse-anim {
-  0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
-}
-```
-
+    /* FOOTER */
+    .footer {
+      border-top: 1px solid var(--border); padding: 18px 20px;
+      text-align: center; font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; color: var(--text-muted); letter-spacing: 0.04em;
+    }
+    .footer a { color: var(--text-dim); text-decoration: none; }
+    .footer a:hover { color: var(--gold); }
+    .pulse {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); margin-right: 5px;
+      animation: pulse-anim 2s ease infinite; vertical-align: middle;
+    }
+    @keyframes pulse-anim {
+      0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+    }
   </style>
 </head>
 <body>
@@ -271,33 +267,11 @@
 
 <script>
 // ── CONFIG ───────────────────────────────────────────────────────────
-const API_KEY  = '26c722673003494586001f6a36bea9de';
-const BASE_URL = 'https://newsapi.org/v2/everything';
-const PROXY_YF = 'https://corsproxy.io/?';
-const YF_BASE  = 'https://query1.finance.yahoo.com/v8/finance/chart/';
+const WORKER_URL = 'https://thedesk.shubhmathur3008.workers.dev';
+const PROXY_YF   = 'https://corsproxy.io/?';
+const YF_BASE    = 'https://query1.finance.yahoo.com/v8/finance/chart/';
 
 // Cache key prefix + TTL (once per day)
-const QUERIES = {
-  india: {
-    q: '(Nifty OR Sensex OR "Indian market" OR RBI OR SEBI OR "Indian economy" OR "Indian rupee" OR FII OR DII OR "India GDP" OR "India inflation") AND (india OR indian)',
-    language: 'en',
-    sortBy: 'publishedAt',
-    pageSize: 20,
-  },
-  global: {
-    q: '"Federal Reserve" OR "Fed rate" OR "Bank of Japan" OR ECB OR PBOC OR "China economy" OR "Japan economy" OR "Asian markets" OR "emerging markets" OR "EM flows" OR "dollar index" OR "bond yields" OR "oil prices" OR "crude oil" OR "commodity prices" OR "gold price" OR inflation OR "trade war" OR "Middle East" OR Iran OR geopolitics OR "US economy" OR "global recession" OR yuan OR yen OR "US-China"',
-    language: 'en',
-    sortBy: 'publishedAt',
-    pageSize: 20,
-  },
-  watchlist: {
-    q: '"HDFC Bank" OR "ICICI Bank" OR "Axis Bank" OR "Kotak Bank" OR "State Bank of India" OR "Jio Financial" OR "CAMS" OR "CDSL" OR "Radico Khaitan" OR "Titan Company" OR "Ethos Ltd" OR "Manyavar" OR "Indian Hotels" OR "ITC Hotels" OR "ITC Ltd" OR "SJS Enterprises" OR "Reliance Industries" OR "Uno Minda" OR "Minda Industries" OR "Home First Finance" OR "DMart" OR "Hero MotoCorp" OR "Emami" OR "CCAvenue" OR "Infibeam" OR "Pine Labs" OR "TVS Motor" OR "Motherson Sumi" OR "Premier Energies" OR "NTPC Green" OR "JSW Energy" OR "Suzlon" OR "KEC International" OR "Apar Industries" OR "Netweb Technologies" OR "Dixon Technologies" OR "Anant Raj" OR "Techno Electric" OR "E2E Networks" OR "Infosys" OR "Tech Mahindra" OR "KIMS" OR "Dr Lal PathLabs" OR "Vijaya Diagnostic" OR "Krsnaa"',
-    language: 'en',
-    sortBy: 'publishedAt',
-    pageSize: 20,
-  },
-};
-
 const MARKET_SYMBOLS = [
   { sym: '^NSEI',     label: 'NIFTY 50',   dec: 2 },
   { sym: '^BSESN',    label: 'SENSEX',     dec: 2 },
@@ -348,16 +322,15 @@ function cacheSet(key, data) {
   } catch(_) {}
 }
 
-// ── NEWSAPI FETCH ─────────────────────────────────────────────────────
+// ── FETCH VIA CLOUDFLARE WORKER ──────────────────────────────────────
 async function fetchNews(panelKey) {
   const cached = cacheGet('desk_' + panelKey);
   if (cached) return cached;
 
-  const params = new URLSearchParams({ ...QUERIES[panelKey], apiKey: API_KEY });
-  const res  = await fetch(BASE_URL + '?' + params.toString(), { signal: AbortSignal.timeout(12000) });
+  const res  = await fetch(WORKER_URL + '/?panel=' + panelKey, { signal: AbortSignal.timeout(12000) });
   const json = await res.json();
 
-  if (json.status !== 'ok') throw new Error(json.message || 'NewsAPI error');
+  if (json.status !== 'ok') throw new Error(json.message || 'Worker error');
 
   const articles = (json.articles || [])
     .filter(a => a.title && a.title !== '[Removed]')
@@ -503,6 +476,5 @@ setInterval(updateHeader, 60000);
   btn.textContent = '↺ REFRESH';
 })();
 </script>
-
 </body>
 </html>
